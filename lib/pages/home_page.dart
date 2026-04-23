@@ -5,8 +5,15 @@ import '../models/note.dart';
 import 'create_page.dart';
 import 'detail_page.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String query = "";
 
   Color _hexToColor(String hex) {
     hex = hex.replaceAll("#", "");
@@ -40,7 +47,11 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notes = context.watch<NoteService>().notes;
+    final service = context.watch<NoteService>();
+
+    final notes = query.isEmpty
+        ? service.notes
+        : service.search(query);
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
@@ -61,59 +72,89 @@ class HomePage extends StatelessWidget {
         ),
       ),
 
-      body: notes.isEmpty
-          ? const Center(child: Text("Aucune note"))
-          : ListView.builder(
-              itemCount: notes.length,
-              itemBuilder: (_, i) {
-                final note = notes[i];
+      body: Column(
+        children: [
 
-                return Container(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(16),
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () => _ouvrirDetail(context, note),
-                      child: Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          color: _hexToColor(note.couleur),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              note.titre,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              note.contenu,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 10),
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Text(
-                                "${note.dateCreation.day}/${note.dateCreation.month}",
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+          /// SEARCH BAR
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: "Rechercher une note...",
+                prefixIcon: const Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  query = value;
+                });
               },
             ),
+          ),
+
+          /// LIST NOTES
+          Expanded(
+            child: notes.isEmpty
+                ? const Center(child: Text("Aucune note"))
+                : ListView.builder(
+                    itemCount: notes.length,
+                    itemBuilder: (_, i) {
+                      final note = notes[i];
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
+                        child: Material(
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(16),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => _ouvrirDetail(context, note),
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16),
+                                color: _hexToColor(note.couleur),
+                              ),
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    note.titre,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    note.contenu,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Align(
+                                    alignment: Alignment.bottomRight,
+                                    child: Text(
+                                      "${note.dateCreation.day}/${note.dateCreation.month}",
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
 
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.deepPurple,
