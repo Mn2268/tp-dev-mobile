@@ -1,5 +1,10 @@
 # bloc_notes
 
+## Membres du groupe
+- 24023
+- 24029
+- 24036
+
 A new Flutter project.
 
 ## Getting Started
