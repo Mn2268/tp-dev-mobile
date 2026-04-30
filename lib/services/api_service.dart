@@ -8,7 +8,12 @@ class ApiService {
   Future<List<Note>> getAllNotes() async {
     final response = await http.get(
       Uri.parse('$baseUrl/posts'),
-      headers: {'User-Agent': 'Flutter/3.0'},
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Connection': 'keep-alive',
+      },
     );
 
     if (response.statusCode == 200) {
@@ -34,7 +39,12 @@ class ApiService {
   Future<bool> createNote(Note note) async {
     final response = await http.post(
       Uri.parse('$baseUrl/posts'),
-      headers: {'Content-Type': 'application/json', 'User-Agent': 'Flutter/3.0'},
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json',
+        'Accept-Language': 'en-US,en;q=0.5',
+      },
       body: jsonEncode({'title': note.titre, 'body': note.contenu}),
     );
 
@@ -45,7 +55,10 @@ class ApiService {
   Future<bool> deleteNote(String id) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/posts/$id'),
-      headers: {'User-Agent': 'Flutter/3.0'},
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
+        'Accept': 'application/json',
+      },
     );
 
     return response.statusCode == 200 || response.statusCode == 204;
