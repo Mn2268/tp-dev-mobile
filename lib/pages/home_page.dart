@@ -4,6 +4,7 @@ import '../services/note_service.dart';
 import '../models/note.dart';
 import 'create_page.dart';
 import 'detail_page.dart';
+import 'api_notes_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -57,20 +58,38 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Colors.grey[100],
 
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.deepPurple,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text("Mes Notes"),
-            Consumer<NoteService>(
-              builder: (_, service, __) {
-                return Text("${service.count}");
-              },
-            ),
-          ],
-        ),
-      ),
+  centerTitle: true,
+  backgroundColor: Colors.deepPurple,
+
+  title: const Text("Mes Notes"),
+
+  actions: [
+    // 🔢 عدد الملاحظات
+    Consumer<NoteService>(
+      builder: (_, service, __) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text("${service.count}"),
+          ),
+        );
+      },
+    ),
+
+    // ☁️ زر API
+    IconButton(
+      icon: const Icon(Icons.cloud),
+      onPressed: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const ApiNotesPage(),
+          ),
+        );
+      },
+    ),
+  ],
+),
 
       body: Column(
         children: [
