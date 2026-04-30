@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../services/note_service.dart';
 import '../models/note.dart';
 import 'create_page.dart';
@@ -15,6 +16,28 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String query = "";
+  bool _isConnected = true;
+  final Connectivity _connectivity = Connectivity();
+
+  @override
+  void initState() {
+    super.initState();
+    _checkConnection();
+    _connectivity.onConnectivityChanged.listen((_) {
+      _checkConnection();
+    });
+  }
+
+  Future<void> _checkConnection() async {
+    final result = await _connectivity.checkConnectivity();
+    setState(() {
+      _isConnected = !result.contains(ConnectivityResult.none);
+    });
+  }
+
+  bool isConnected() {
+    return _isConnected;
+  }
 
   Color _hexToColor(String hex) {
     hex = hex.replaceAll("#", "");
@@ -63,8 +86,27 @@ class _HomePageState extends State<HomePage> {
 
   title: const Text("Mes Notes"),
 
-  actions: [
-    // 🔢 عدد الملاحظات
+actions: [
+    // 🔗 Statut de connexion
+    IconButton(
+      icon: Icon(_isConnected ? Icons.wifi : Icons.wifi_off),
+      onPressed: () {
+        if (_isConnected) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => const ApiNotesPage(),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Hors ligne - Mode locale uniquement")),
+          );
+        }
+      },
+    ),
+
+    // 🔢 nombre de notes
     Consumer<NoteService>(
       builder: (_, service, __) {
         return Center(

@@ -6,7 +6,10 @@ class ApiService {
   final String baseUrl = "https://jsonplaceholder.typicode.com";
   // 🔵 GET
   Future<List<Note>> getAllNotes() async {
-    final response = await http.get(Uri.parse('$baseUrl/posts'));
+    final response = await http.get(
+      Uri.parse('$baseUrl/posts'),
+      headers: {'User-Agent': 'Flutter/3.0'},
+    );
 
     if (response.statusCode == 200) {
       final List data = jsonDecode(response.body);
@@ -31,7 +34,7 @@ class ApiService {
   Future<bool> createNote(Note note) async {
     final response = await http.post(
       Uri.parse('$baseUrl/posts'),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json', 'User-Agent': 'Flutter/3.0'},
       body: jsonEncode({'title': note.titre, 'body': note.contenu}),
     );
 
@@ -40,7 +43,10 @@ class ApiService {
 
   // 🔴 DELETE
   Future<bool> deleteNote(String id) async {
-    final response = await http.delete(Uri.parse('$baseUrl/posts/$id'));
+    final response = await http.delete(
+      Uri.parse('$baseUrl/posts/$id'),
+      headers: {'User-Agent': 'Flutter/3.0'},
+    );
 
     return response.statusCode == 200 || response.statusCode == 204;
   }
